@@ -1,18 +1,25 @@
-import { useEffect, useState } from "react"
+import { Routes, Route } from "react-router-dom"
+
+import DashboardLayout from "./components/layout/DashboardLayout"
+
+import HomePage from "./pages/home/HomePage"
+import GradesPage from "./pages/Grades/GradesPage"
+import InsightsPage from "./pages/Insights/InsightsPage"
+import SettingsPage from "./pages/Settings/SettingsPage"
+import StudentsPage from "./pages/Students/StudentsPage"
 
 function App() {
-  const [message, setMessage] = useState("")
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000/")
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-  }, [])
-
   return (
-    <div className="text-3xl text-center mt-10">
-      {message}
-    </div>
+    <Routes>
+      <Route element={<DashboardLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/grades" element={<GradesPage />} />
+        <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/students" element={<StudentsPage />} />
+      </Route>
+    </Routes>
   )
 }
 

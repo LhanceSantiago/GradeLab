@@ -1,6 +1,7 @@
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 
 function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
+  const { pathname } = useLocation()
 
   function closeSidebar() {
       setIsSidebarOpen(false)
@@ -53,7 +54,11 @@ function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
         <div className="flex flex-col gap-2">
 
-          <NavLink className={navClass} to="/home" onClick={closeSidebar}>
+          <NavLink
+            className={() => navClass({ isActive: pathname === "/" || pathname === "/home" })}
+            to="/home"
+            onClick={closeSidebar}
+          >
             Home
           </NavLink>
 

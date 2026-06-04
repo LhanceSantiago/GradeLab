@@ -1,22 +1,22 @@
-/* import font here */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+body {
+  font-family: 'Poppins', sans-serif;
+}
 
 @theme {
-  /* FONTS */
-  /* --font-primary: ; */
+  --color-primary: #6F58C9;
+  --color-lightPrimary: #7E78D2;
+  --color-secondary: #BDEDE0;
+  --color-tertiary: #BBDBD1;
 
-  /* COLORS */
   --color-light: #ffffff;
   --color-dark: #000201;
-}
-@layer base {
-
 }
 
 @layer components {
   .btn {
-    @apply inline-block px-8 py-3 bg-transparent border border-transparent transition-all duration-500 ease-in-out text-center font-semibold text-sm text-light rounded-xl cursor-pointer
+    @apply inline-block px-8 py-3 bg-transparent border border-transparent transition-all duration-500 ease-in-out text-center font-semibold text-sm text-light rounded-xl cursor-pointer;
   }
-
 }

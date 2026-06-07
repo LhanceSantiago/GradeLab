@@ -1,34 +1,18 @@
-import { useState } from "react"
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom"
 
 import Header from "./Header"
-import Sidebar from "./Sidebar"
 
 function DashboardLayout() {
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const location = useLocation()
 
   return (
-    <div className="h-screen flex flex-col">
-
-      <Header
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-      />
-      <div className="flex flex-1 overflow-hidden">
-
-        <Sidebar
-          isSidebarOpen={isSidebarOpen}
-          setIsSidebarOpen={setIsSidebarOpen}
-        />
-          
-          <main className="min-w-0 flex-1 w-full overflow-y-auto">
-          <Outlet />  
-        </main>
-        
-        
-      </div>
-
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <Header />
+      <main className="min-w-0 flex-1">
+        <div key={location.pathname} className="min-h-full animate-[pageSwitch_180ms_ease-out]">
+          <Outlet />
+        </div>
+      </main>
     </div>
   )
 }

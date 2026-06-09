@@ -338,11 +338,14 @@ def init_database():
             )
             """
         )
-        connection.execute("DELETE FROM grades")
-        connection.execute("DELETE FROM students")
-        connection.execute("DELETE FROM subject_sections")
-        connection.execute("DELETE FROM subjects")
-        connection.execute("DELETE FROM sections")
+        existing_data = any(
+            connection.execute(f"SELECT COUNT(*) AS count FROM {table_name}").fetchone()["count"]
+            for table_name in ["students", "sections", "subjects", "subject_sections", "grades"]
+        )
+
+        if existing_data:
+            return
+
         connection.executemany(
             """
             INSERT INTO sections (section, year)

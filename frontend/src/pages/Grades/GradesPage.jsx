@@ -873,7 +873,7 @@ function GradesPage() {
                     <th className="w-[13%] px-3 py-3">Midterm</th>
                     <th className="w-[13%] px-3 py-3">Semi</th>
                     <th className="w-[13%] px-3 py-3">Finals</th>
-                    <th className="w-[13%] px-3 py-3">Grade</th>
+                    <th className="w-[13%] px-3 py-3">Average</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 text-sm">

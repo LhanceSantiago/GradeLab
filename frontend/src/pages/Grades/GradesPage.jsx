@@ -468,13 +468,34 @@ function GradesPage() {
     window.print()
   }
 
-  function sendStudentGradesToEmail() {
+  async function sendStudentGradesToEmail() {
     if (!studentGradesAreComplete()) {
       warnIncompleteGrades()
       return
     }
 
-    setToastMessage("Email sending will be available soon.")
+    const recipient = studentGrades.student.email?.trim()
+    if (!recipient) {
+      setToastMessage("This student has no email address.")
+      return
+    }
+
+    const subject = `GradeLab Grade Report - ${studentGrades.student.name}`
+    const htmlBody = buildEmailGradeReportHtml(studentGrades.student, gradeDrafts)
+    const textBody = buildEmailGradeReportText(studentGrades.student, gradeDrafts)
+    const copiedHtml = await copyEmailReportToClipboard(htmlBody, textBody)
+    const gmailUrl = new URL("https://mail.google.com/mail/")
+    gmailUrl.searchParams.set("view", "cm")
+    gmailUrl.searchParams.set("fs", "1")
+    gmailUrl.searchParams.set("to", recipient)
+    gmailUrl.searchParams.set("su", subject)
+
+    if (!copiedHtml) {
+      gmailUrl.searchParams.set("body", textBody)
+    }
+
+    window.open(gmailUrl.toString(), "_blank", "noopener,noreferrer")
+    setToastMessage(copiedHtml ? "Grade report design copied. Paste it into Gmail body." : "Plain grade report added to Gmail.")
   }
 
   return (
@@ -971,6 +992,142 @@ function labelGrade(field) {
     semi: "Semifinal",
     finals: "Final",
   }[field]
+}
+
+async function copyEmailReportToClipboard(htmlBody, textBody) {
+  try {
+    if (navigator.clipboard?.write && window.ClipboardItem) {
+      await navigator.clipboard.write([
+        new window.ClipboardItem({
+          "text/html": new Blob([htmlBody], { type: "text/html" }),
+          "text/plain": new Blob([textBody], { type: "text/plain" }),
+        }),
+      ])
+      return true
+    }
+
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(textBody)
+    }
+  } catch {
+    return false
+  }
+
+  return false
+}
+
+function buildEmailGradeReportHtml(student, grades) {
+  const rows = grades.map((grade, index) => {
+    const isLast = index === grades.length - 1
+    const cellBorder = isLast ? "" : "border-bottom:1px solid #e5e7eb;"
+
+    return `
+      <tr>
+        <td style="padding:14px 12px;${cellBorder}">
+          <div style="font-weight:700;color:#374151;font-size:13px;line-height:1.2;">${escapeHtml(grade.code || "Subject")}</div>
+          <div style="color:#4b5563;font-size:12px;line-height:1.25;margin-top:2px;">${escapeHtml(grade.subject || "")}</div>
+        </td>
+        <td style="padding:14px 12px;${cellBorder}color:#4b5563;text-align:center;font-size:13px;">${escapeHtml(displayGrade(grade.prelim))}</td>
+        <td style="padding:14px 12px;${cellBorder}color:#4b5563;text-align:center;font-size:13px;">${escapeHtml(displayGrade(grade.midterm))}</td>
+        <td style="padding:14px 12px;${cellBorder}color:#4b5563;text-align:center;font-size:13px;">${escapeHtml(displayGrade(grade.semi))}</td>
+        <td style="padding:14px 12px;${cellBorder}color:#4b5563;text-align:center;font-size:13px;">${escapeHtml(displayGrade(grade.finals))}</td>
+        <td style="padding:14px 12px;${cellBorder}color:#111827;text-align:center;font-size:13px;font-weight:700;">${escapeHtml(displayGrade(grade.finalGrade))}</td>
+      </tr>
+    `
+  }).join("")
+
+  return `
+    <div style="font-family:Arial,Helvetica,sans-serif;color:#111827;max-width:760px;padding:18px;background:#ffffff;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#374151;text-transform:uppercase;margin-bottom:6px;">Student Info</div>
+      <div style="font-size:22px;font-weight:800;line-height:1.25;margin-bottom:18px;">${escapeHtml(student.name)}</div>
+
+      <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px;color:#4b5563;">
+        <tr>
+          <td style="width:50%;padding:2px 10px 4px 0;"><strong style="color:#374151;">ID:</strong> ${escapeHtml(student.idNum)}</td>
+          <td style="width:50%;padding:2px 0 4px 10px;"><strong style="color:#374151;">Email:</strong> ${escapeHtml(student.email || "No email")}</td>
+        </tr>
+        <tr>
+          <td style="width:50%;padding:2px 10px 4px 0;"><strong style="color:#374151;">Year:</strong> ${escapeHtml(student.year)}</td>
+          <td style="width:50%;padding:2px 0 4px 10px;"><strong style="color:#374151;">Section:</strong> ${escapeHtml(student.section)}</td>
+        </tr>
+      </table>
+
+      <div style="height:1px;background:#e5e7eb;margin:0 0 18px;"></div>
+
+      <table style="width:100%;border-collapse:separate;border-spacing:0;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;font-size:13px;">
+        <thead>
+          <tr>
+            <th style="padding:12px;text-align:left;font-size:11px;text-transform:uppercase;color:#374151;font-weight:800;">Subject Code</th>
+            <th style="padding:12px;text-align:center;font-size:11px;text-transform:uppercase;color:#374151;font-weight:800;">Prelim</th>
+            <th style="padding:12px;text-align:center;font-size:11px;text-transform:uppercase;color:#374151;font-weight:800;">Midterm</th>
+            <th style="padding:12px;text-align:center;font-size:11px;text-transform:uppercase;color:#374151;font-weight:800;">Semi</th>
+            <th style="padding:12px;text-align:center;font-size:11px;text-transform:uppercase;color:#374151;font-weight:800;">Finals</th>
+            <th style="padding:12px;text-align:center;font-size:11px;text-transform:uppercase;color:#374151;font-weight:800;">Average</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
+  `
+}
+
+function buildEmailGradeReportText(student, grades) {
+  const tableRows = grades.flatMap((grade) => {
+    const subjectCode = grade.code || "Subject"
+    const subjectName = grade.subject || ""
+
+    return [
+      [
+        subjectCode.padEnd(22),
+        String(displayGrade(grade.prelim)).padEnd(10),
+        String(displayGrade(grade.midterm)).padEnd(10),
+        String(displayGrade(grade.semi)).padEnd(10),
+        String(displayGrade(grade.finals)).padEnd(10),
+        String(displayGrade(grade.finalGrade)).padEnd(10),
+      ].join(""),
+      `  ${subjectName}`,
+    ]
+  })
+
+  const lines = [
+    "GradeLab Grade Report",
+    "",
+    "Student Info",
+    `Name: ${student.name}`,
+    `ID: ${student.idNum}`,
+    `Email: ${student.email || "No email"}`,
+    `Year: ${student.year}`,
+    `Section: ${student.section}`,
+    "",
+    "Grades",
+    [
+      "Subject Code".padEnd(22),
+      "Prelim".padEnd(10),
+      "Midterm".padEnd(10),
+      "Semi".padEnd(10),
+      "Finals".padEnd(10),
+      "Average".padEnd(10),
+    ].join(""),
+    "-".repeat(72),
+    ...tableRows,
+    "",
+    "Thank you.",
+    "",
+    "Generated by GradeLab",
+  ]
+
+  return lines.join("\n")
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
 }
 
 function parseSectionName(section) {

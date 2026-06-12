@@ -432,7 +432,7 @@ function StudentsPage() {
             </p>
           </div>
 
-          <div className="flex w-full flex-col gap-2 lg:w-auto lg:min-w-[34rem] lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex w-full flex-col gap-2 lg:w-auto lg:flex-row lg:items-center">
             <button className={primaryButtonClass} onClick={openAddForm}>
               Add Student
             </button>
@@ -549,7 +549,7 @@ function StudentsPage() {
               <table className="min-w-[48rem] w-full table-fixed text-left">
                 <thead className="bg-slate-100 text-[11px] uppercase leading-tight text-slate-500 xl:text-xs 2xl:text-sm">
                   <tr>
-                    <th className="w-[16%] px-2 py-3">ID</th>
+                    <th className="w-[16%] py-3 pl-8 pr-2">ID</th>
                     <th className="w-[28%] px-2 py-3">Name</th>
                     <th className="w-[28%] px-2 py-3">Email</th>
                     <th className="w-[13%] px-2 py-3">Average</th>
@@ -572,7 +572,7 @@ function StudentsPage() {
                   ) : (
                     paginatedStudents.map((student) => (
                       <tr key={student.idNum} className="h-14 hover:bg-slate-50">
-                        <td className="break-words px-2 py-2 align-middle font-semibold text-primary">{student.idNum}</td>
+                        <td className="break-words py-2 pl-8 pr-2 align-middle font-semibold text-primary">{student.idNum}</td>
                         <td className="break-words px-2 py-2 align-middle font-medium text-dark">{student.name}</td>
                         <td className="break-words px-2 py-2 align-middle text-slate-600">{student.email || "No email"}</td>
                         <td className="break-words px-2 py-2 align-middle font-semibold text-dark">{student.finalGrade}</td>

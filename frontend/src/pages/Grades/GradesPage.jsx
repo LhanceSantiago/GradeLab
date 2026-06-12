@@ -626,7 +626,7 @@ function GradesPage() {
               <table className="w-full table-fixed text-left">
                 <thead className="bg-slate-100 text-[10px] uppercase leading-tight text-slate-500 2xl:text-xs">
                   <tr>
-                    <th className="w-[13%] px-1.5 py-2.5">ID</th>
+                    <th className="w-[13%] py-2.5 pl-6 pr-1.5">ID</th>
                     <th className="w-[23%] px-1.5 py-2.5">Name</th>
                     <th className="w-[10%] px-1.5 py-2.5">Prelim</th>
                     <th className="w-[10%] px-1.5 py-2.5">Midterm</th>
@@ -646,7 +646,7 @@ function GradesPage() {
                   ) : (
                     paginatedGradeRows.map((student) => (
                       <tr key={student.studentId} className="h-12 hover:bg-slate-50 2xl:h-14">
-                        <td className="break-words px-1.5 py-1.5 align-middle font-semibold text-primary">{student.studentId}</td>
+                        <td className="break-words py-1.5 pl-6 pr-1.5 align-middle font-semibold text-primary">{student.studentId}</td>
                         <td className="break-words px-1.5 py-1.5 align-middle font-medium text-dark">{student.name}</td>
                         <td className="px-1.5 py-1.5 align-middle text-slate-600">{displayGrade(student.prelim)}</td>
                         <td className="px-1.5 py-1.5 align-middle text-slate-600">{displayGrade(student.midterm)}</td>

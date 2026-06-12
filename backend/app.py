@@ -50,7 +50,7 @@ SECTION_SEEDS = [
     for course in COURSES
     for year in YEAR_OPTIONS
 ]
-EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$")
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+$")
 LEGACY_SECTION_RENAMES = {
     "BSIT 1A": "BSIT-1A",
     "BSIT 1B": "BSIT-1B",

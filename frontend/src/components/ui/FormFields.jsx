@@ -3,6 +3,7 @@ export function TextInput({
   highlighted = false,
   label,
   list,
+  inputMode,
   pattern,
   placeholder = "",
   required = true,
@@ -21,6 +22,7 @@ export function TextInput({
             : "border-slate-200 bg-white"
         }`}
         disabled={disabled}
+        inputMode={inputMode}
         list={list}
         pattern={pattern}
         placeholder={placeholder}

@@ -38,6 +38,7 @@ const modalPanelClass =
 const SECTIONS_PER_PAGE = 6
 const STUDENTS_PER_PAGE = 6
 const panelHeightClass = "h-[min(52rem,calc(100vh-10rem))]"
+const STUDENT_EMAIL_PATTERN = /^[^@\s]+@[^@.\s]+(\.[^@.\s]+)+$/
 
 function StudentsPage() {
   const [sections, setSections] = useState([])
@@ -276,6 +277,12 @@ function StudentsPage() {
     event.preventDefault()
     setError("")
 
+    const email = formData.email.trim()
+    if (!STUDENT_EMAIL_PATTERN.test(email)) {
+      setError("Invalid email.")
+      return
+    }
+
     const isAdd = mode === "add"
     const url = isAdd
       ? `${API_BASE_URL}/students`
@@ -283,7 +290,7 @@ function StudentsPage() {
 
     const payload = {
       idNum: formData.idNum,
-      email: formData.email,
+      email,
       lastName: formData.lastName,
       firstName: formData.firstName,
       middleName: formData.middleName,
@@ -726,9 +733,8 @@ function StudentsPage() {
                   <TextInput
                     highlighted
                     label="Email"
-                    pattern="^[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+(\\.[A-Za-z0-9\-]+)+$"
+                    inputMode="email"
                     title="Invalid email."
-                    type="email"
                     value={formData.email}
                     onChange={(value) => updateField("email", value)}
                   />
